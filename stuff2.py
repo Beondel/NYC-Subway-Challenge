@@ -64,3 +64,41 @@ for item in full_list:
 print(f"{len(timed_graph) = }")
 print(f"{len(graph) = }")
 print(' '.join(sorted(list(graph))))
+
+
+filename = "google_transit/transfers.txt"
+f = open(filename, 'r')
+
+trans_graph = {}
+
+graph_size = 0
+count = 0
+for line in f:
+    count += 1
+    if count == 1:
+        continue
+    info = line.split(',')
+    stats = []
+    stats.append(info[0] + 'N')
+    stats.append(info[0] + 'S')
+    stats.append(info[1] + 'N')
+    stats.append(info[1] + 'S')
+    stats = list(set(stats))
+    time = int(info[3])
+
+    for item1 in stats:
+        for item2 in stats:
+            if item1 == item2:
+                continue
+            if item1 not in trans_graph:
+                trans_graph[item1] = {}
+            if item2 not in trans_graph[item1]:
+                trans_graph[item1][item2] = 60**3
+                trans_graph[item1][item2] = min(trans_graph[item1][item2], time)
+            graph_size += 1
+
+for stat in trans_graph:
+    neighs = trans_graph[stat]
+    if len(neighs) > 1:
+        print(f"{stat} : {len(neighs)}")
+print(len(trans_graph))
