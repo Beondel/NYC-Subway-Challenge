@@ -56,13 +56,19 @@ for item in full_list:
 
     if trip == last_trip:
         timed_graph[(last_name, last_time)].append((name, time))
-        graph[last_name].append(name)
+        if name not in graph[last_name]:
+            graph[last_name].append(name)
 
+    last_trip = trip
     last_name = name
     last_time = time
 
 print(f"{len(timed_graph) = }")
 print(f"{len(graph) = }")
+edges = 0
+for name in graph:
+    edges += len(graph[name])
+print(f"{edges = }")
 print(' '.join(sorted(list(graph))))
 
 
@@ -97,8 +103,39 @@ for line in f:
                 trans_graph[item1][item2] = min(trans_graph[item1][item2], time)
             graph_size += 1
 
-for stat in trans_graph:
-    neighs = trans_graph[stat]
-    if len(neighs) > 1:
-        print(f"{stat} : {len(neighs)}")
+#for stat in trans_graph:
+#    neighs = trans_graph[stat]
+#    if len(neighs) > 1:
+#        print(f"{stat} : {len(neighs)}")
 print(len(trans_graph))
+
+for name in graph:
+    if name not in trans_graph:
+        continue
+    for neigh in trans_graph[name]:
+        if neigh not in graph[name]:
+            graph[name].append(neigh)
+
+for name in graph:
+    print(f"{name} : {graph[name]}")
+    edges += len(graph[name])
+print(f"{edges = }")
+
+new_times = []
+
+for name, time in timed_graph:
+    if name not in trans_graph:
+        continue
+    trans = trans_graph[name]
+    for neigh in trans:
+        time2 = time + trans[neigh]
+        neigh_time = (neigh, time2)
+        timed_graph[(name, time)].append(neigh_time)
+        if neigh_time not in timed_graph:
+            new_times.append(neigh_time)
+        graph[name].append(neigh)
+
+for neigh_time in new_times:
+    timed_graph[neigh_time] = []
+
+print(len(timed_graph))
