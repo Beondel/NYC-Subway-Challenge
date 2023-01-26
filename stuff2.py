@@ -39,6 +39,8 @@ current_trip_id = ""
 timed_graph = {}
 graph = {}
 
+trips = []
+
 last_trip = ""
 last_name = ""
 last_time = ""
@@ -58,10 +60,14 @@ for item in full_list:
         timed_graph[(last_name, last_time)].append((name, time))
         if name not in graph[last_name]:
             graph[last_name].append(name)
+    else:
+        trips.append(trip)
 
     last_trip = trip
     last_name = name
     last_time = time
+
+print(trips)
 
 print(f"{len(timed_graph) = }")
 print(f"{len(graph) = }")
@@ -117,7 +123,7 @@ for name in graph:
             graph[name].append(neigh)
 
 for name in graph:
-    print(f"{name} : {graph[name]}")
+    #print(f"{name} : {graph[name]}")
     edges += len(graph[name])
 print(f"{edges = }")
 
